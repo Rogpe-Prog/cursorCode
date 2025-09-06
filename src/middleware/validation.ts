@@ -35,6 +35,36 @@ const userSchema = Joi.object({
       'number.min': 'Idade deve ser positiva',
       'number.max': 'Idade deve ser menor que 120',
     }),
+  cel: Joi.string()
+    .pattern(/^[0-9]{10,11}$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'Celular deve conter apenas números e ter 10 ou 11 dígitos',
+      'any.required': 'Celular é obrigatório',
+    }),
+  userType: Joi.string()
+    .valid('comprador', 'recebedor', 'ambos')
+    .required()
+    .messages({
+      'any.only': 'Tipo de usuário deve ser: comprador, recebedor ou ambos',
+      'any.required': 'Tipo de usuário é obrigatório',
+    }),
+  address: Joi.string()
+    .min(10)
+    .max(200)
+    .required()
+    .messages({
+      'string.min': 'Endereço deve ter pelo menos 10 caracteres',
+      'string.max': 'Endereço deve ter no máximo 200 caracteres',
+      'any.required': 'Endereço é obrigatório',
+    }),
+  availableStatus: Joi.boolean().optional(),
+  credits: Joi.number()
+    .min(0)
+    .optional()
+    .messages({
+      'number.min': 'Créditos não podem ser negativos',
+    }),
   isActive: Joi.boolean().optional(),
 });
 

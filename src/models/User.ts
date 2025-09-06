@@ -7,6 +7,11 @@ export interface IUser extends Document {
   password: string;
   age?: number;
   isActive: boolean;
+  cel: string;
+  userType: 'comprador' | 'recebedor' | 'ambos';
+  address: string;
+  availableStatus: boolean;
+  credits: number;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -47,6 +52,39 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: true,
     },
+    cel: {
+      type: String,
+      required: [true, 'Celular é obrigatório'],
+      trim: true,
+      match: [
+        /^[0-9]{10,11}$/,
+        'Celular deve conter apenas números e ter 10 ou 11 dígitos',
+      ],
+    },
+    userType: {
+      type: String,
+      required: [true, 'Tipo de usuário é obrigatório'],
+      enum: {
+        values: ['comprador', 'recebedor', 'ambos'],
+        message: 'Tipo de usuário deve ser: comprador, recebedor ou ambos',
+      },
+    },
+    address: {
+      type: String,
+      required: [true, 'Endereço é obrigatório'],
+      trim: true,
+      minlength: [10, 'Endereço deve ter pelo menos 10 caracteres'],
+      maxlength: [200, 'Endereço deve ter no máximo 200 caracteres'],
+    },
+    availableStatus: {
+      type: Boolean,
+      default: true,
+    },
+    credits: {
+      type: Number,
+      default: 0,
+      min: [0, 'Créditos não podem ser negativos'],
+    },
   },
   {
     timestamps: true,
@@ -84,5 +122,8 @@ userSchema.methods['comparePassword'] = async function (
 // Índices para performance
 userSchema.index({ email: 1 });
 userSchema.index({ isActive: 1 });
+userSchema.index({ userType: 1 });
+userSchema.index({ availableStatus: 1 });
+userSchema.index({ cel: 1 });
 
 export const User = mongoose.model<IUser>('User', userSchema);

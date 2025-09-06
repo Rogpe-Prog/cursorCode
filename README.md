@@ -17,6 +17,7 @@ Este é um projeto Node.js completo com TypeScript, Express, MongoDB e todas as 
 - **Morgan** - Logger de requisições HTTP
 - **JWT** - Autenticação baseada em tokens
 - **bcryptjs** - Hash de senhas
+- **Joi** - Validação de dados de entrada
 
 ## 📁 Estrutura do Projeto
 
@@ -165,7 +166,12 @@ curl -X POST http://localhost:3000/api/auth/register \
     "name": "João Silva",
     "email": "joao@example.com",
     "password": "minhasenha123",
-    "age": 30
+    "age": 30,
+    "cel": "11999999999",
+    "userType": "comprador",
+    "address": "Rua das Flores, 123, Centro, São Paulo - SP",
+    "availableStatus": true,
+    "credits": 0
   }'
 ```
 
@@ -193,7 +199,12 @@ curl -X POST http://localhost:3000/api/users \
     "name": "Maria Santos",
     "email": "maria@example.com",
     "password": "123456",
-    "age": 25
+    "age": 25,
+    "cel": "11988888888",
+    "userType": "recebedor",
+    "address": "Avenida Paulista, 1000, Bela Vista, São Paulo - SP",
+    "availableStatus": true,
+    "credits": 0
   }'
 ```
 
@@ -220,7 +231,12 @@ curl http://localhost:3000/api/users
   "name": "João Silva",
   "email": "joao@email.com",
   "password": "minhasenha123",
-  "age": 30
+  "age": 30,
+  "cel": "11999999999",
+  "userType": "comprador",
+  "address": "Rua das Flores, 123, Centro, São Paulo - SP",
+  "availableStatus": true,
+  "credits": 0
 }
 ```
 
@@ -279,6 +295,78 @@ curl http://localhost:3000/api/users
 }
 ```
 
+#### **Erro de Validação de Campos:**
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Celular deve conter apenas números e ter 10 ou 11 dígitos, Tipo de usuário deve ser: comprador, recebedor ou ambos, Endereço deve ter pelo menos 10 caracteres"
+  }
+}
+```
+
+#### **Erro de Email Duplicado:**
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Email já cadastrado no sistema"
+  }
+}
+```
+
+## 👥 Tipos de Usuário
+
+O sistema suporta três tipos de usuários para diferentes funcionalidades:
+
+### **1. Comprador**
+Usuário que faz pedidos e recebe entregas:
+```json
+{
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "password": "minhasenha123",
+  "age": 30,
+  "cel": "11999999999",
+  "userType": "comprador",
+  "address": "Rua das Flores, 123, Centro, São Paulo - SP",
+  "availableStatus": true,
+  "credits": 0
+}
+```
+
+### **2. Recebedor**
+Usuário que recebe e entrega encomendas:
+```json
+{
+  "name": "Maria Santos",
+  "email": "maria@email.com",
+  "password": "senha123456",
+  "age": 25,
+  "cel": "11988888888",
+  "userType": "recebedor",
+  "address": "Avenida Paulista, 1000, Bela Vista, São Paulo - SP",
+  "availableStatus": true,
+  "credits": 0
+}
+```
+
+### **3. Ambos**
+Usuário que pode tanto comprar quanto receber/entregar:
+```json
+{
+  "name": "Carlos Oliveira",
+  "email": "carlos@email.com",
+  "password": "senha789",
+  "age": 35,
+  "cel": "11977777777",
+  "userType": "ambos",
+  "address": "Rua Augusta, 500, Consolação, São Paulo - SP",
+  "availableStatus": false,
+  "credits": 100
+}
+```
+
 ## 🔧 Scripts Disponíveis
 
 - `npm run dev` - Inicia o servidor em modo desenvolvimento
@@ -305,12 +393,43 @@ O projeto inclui várias medidas de segurança:
 - **Middleware de autenticação** - Proteção de rotas sensíveis
 - **Sanitização** - Sanitização de dados de entrada
 
+## 👤 Modelo de Usuário
+
+O sistema possui um modelo de usuário completo com campos específicos para sistema de entregas:
+
+### **Campos Obrigatórios:**
+- **`name`** - Nome completo do usuário (2-50 caracteres)
+- **`email`** - Email único para login (formato válido)
+- **`password`** - Senha segura (mínimo 6 caracteres, hash com bcrypt)
+- **`cel`** - Celular do usuário (10 ou 11 dígitos, apenas números)
+- **`userType`** - Tipo de usuário: `"comprador"`, `"recebedor"` ou `"ambos"`
+- **`address`** - Endereço completo (10-200 caracteres)
+
+### **Campos Opcionais:**
+- **`age`** - Idade do usuário (0-120 anos)
+- **`availableStatus`** - Status de disponibilidade (padrão: `true`)
+- **`credits`** - Créditos do usuário (padrão: `0`, mínimo: `0`)
+- **`isActive`** - Status ativo do usuário (padrão: `true`)
+
+### **Campos Automáticos:**
+- **`_id`** - ID único do usuário (MongoDB ObjectId)
+- **`createdAt`** - Data de criação (timestamp)
+- **`updatedAt`** - Data da última atualização (timestamp)
+
+### **Validações Implementadas:**
+- ✅ **Celular:** Apenas números, 10 ou 11 dígitos
+- ✅ **Tipo de usuário:** Apenas valores válidos (comprador, recebedor, ambos)
+- ✅ **Endereço:** Mínimo 10, máximo 200 caracteres
+- ✅ **Créditos:** Não podem ser negativos
+- ✅ **Email:** Formato válido e único no sistema
+- ✅ **Senha:** Mínimo 6 caracteres, hash seguro
+
 ## 🔐 Sistema de Autenticação
 
 O projeto implementa um sistema completo de autenticação com JWT:
 
 ### **Funcionalidades:**
-- **Registro de usuários** com validação de dados
+- **Registro de usuários** com validação de dados completos
 - **Login seguro** com verificação de credenciais
 - **Tokens JWT** para autenticação stateless
 - **Middleware de proteção** para rotas sensíveis
@@ -334,6 +453,11 @@ O projeto implementa um sistema completo de autenticação com JWT:
       "name": "João Silva",
       "email": "joao@example.com",
       "age": 30,
+      "cel": "11999999999",
+      "userType": "comprador",
+      "address": "Rua das Flores, 123, Centro, São Paulo - SP",
+      "availableStatus": true,
+      "credits": 0,
       "isActive": true,
       "createdAt": "2023-09-06T10:30:00.000Z",
       "updatedAt": "2023-09-06T10:30:00.000Z"

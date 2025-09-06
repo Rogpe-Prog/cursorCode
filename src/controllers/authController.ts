@@ -7,13 +7,18 @@ export const authController = {
    */
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { name, email, password, age } = req.body;
+      const { name, email, password, age, cel, userType, address, availableStatus, credits } = req.body;
 
       const result = await authService.register({
         name,
         email,
         password,
         age,
+        cel,
+        userType,
+        address,
+        availableStatus,
+        credits,
       });
 
       res.status(201).json({

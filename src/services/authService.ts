@@ -30,6 +30,11 @@ export const authService = {
     email: string;
     password: string;
     age?: number;
+    cel: string;
+    userType: 'comprador' | 'recebedor' | 'ambos';
+    address: string;
+    availableStatus?: boolean;
+    credits?: number;
   }): Promise<AuthResponse> {
     try {
       // Verificar se o usuário já existe

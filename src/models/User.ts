@@ -51,8 +51,10 @@ const userSchema = new Schema<IUser>(
   {
     timestamps: true,
     toJSON: {
-      transform: function (doc, ret) {
-        delete ret.password;
+      transform: function (_doc, ret: any) {
+        if (ret.password) {
+          delete ret.password;
+        }
         return ret;
       },
     },
@@ -73,10 +75,10 @@ userSchema.pre('save', async function (next) {
 });
 
 // Método para comparar senhas
-userSchema.methods.comparePassword = async function (
+userSchema.methods['comparePassword'] = async function (
   candidatePassword: string
 ): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
+  return bcrypt.compare(candidatePassword, this['password']);
 };
 
 // Índices para performance

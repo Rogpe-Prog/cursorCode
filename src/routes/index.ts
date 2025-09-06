@@ -1,13 +1,17 @@
 import { Router } from 'express';
 import { userRoutes } from './userRoutes';
+import { authRoutes } from './authRoutes';
 
 const router = Router();
+
+// Rotas de autenticação
+router.use('/auth', authRoutes);
 
 // Rotas de usuários
 router.use('/users', userRoutes);
 
 // Rota de exemplo
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
   res.json({
     success: true,
     message: 'API Node.js funcionando!',

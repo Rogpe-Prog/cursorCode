@@ -3,7 +3,7 @@ import { userService } from '../services/userService';
 import { AppError } from '../middleware/errorHandler';
 
 export const userController = {
-  async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getAllUsers(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const users = await userService.getAllUsers();
       res.json({
@@ -19,6 +19,9 @@ export const userController = {
   async getUserById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
+      if (!id) {
+        throw new AppError('ID é obrigatório');
+      }
       const user = await userService.getUserById(id);
       
       if (!user) {
@@ -52,6 +55,9 @@ export const userController = {
   async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
+      if (!id) {
+        throw new AppError('ID é obrigatório');
+      }
       const userData = req.body;
       const updatedUser = await userService.updateUser(id, userData);
       
@@ -72,6 +78,9 @@ export const userController = {
   async deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
+      if (!id) {
+        throw new AppError('ID é obrigatório');
+      }
       const deletedUser = await userService.deleteUser(id);
       
       if (!deletedUser) {

@@ -53,6 +53,69 @@ src/
 └── index.ts         # Arquivo principal da aplicação
 ```
 
+## 🧭 Visão Geral da Arquitetura
+
+```text
+                         ┌───────────────────────────────┐
+                         │            Usuário            │
+                         │ (Navegador / Mobile / CLI)    │
+                         └───────────────┬───────────────┘
+                                         │ HTTP(S) Requests
+                                         ▼
+                          Frontend (Vite + React + TS)
+                  ┌──────────────────────────────────────────┐
+                  │  Roteamento (react-router-dom)           │
+                  │  Formulários (react-hook-form)           │
+                  │  UI (react-bootstrap / bootstrap)        │
+                  │  Notificações (react-toastify)           │
+                  │  Auth + Cookies (axios + js-cookie)      │
+                  └───────────────┬──────────────────────────┘
+                                  │ REST API (Axios) -> VITE_API_BASE_URL
+                                  ▼
+                     Backend (Node.js + Express + TypeScript)
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ Middlewares:                                                                 │
+│ - Segurança (helmet)                                                         │
+│ - CORS (cors)                                                                │
+│ - Compressão (compression)                                                   │
+│ - Logs (morgan)                                                              │
+│ - Rate Limiting (express-rate-limit)                                         │
+│ - Parsing JSON/urlencoded                                                     │
+│                                                                              │
+│ Rotas:                                                                       │
+│ - /health → Health Check                                                     │
+│ - /api/auth → authController (register, login, profile)                      │
+│ - /api/users → userController (CRUD)                                         │
+│                                                                              │
+│ Controllers → Services → Model (Mongoose)                                    │
+│                                                                              │
+│ Tratamento Global:                                                           │
+│ - notFoundHandler (404)                                                       │
+│ - errorHandler (erros de negócio/validação)                                  │
+└───────────────────────┬──────────────────────────────────────────────────────┘
+                        │
+                        │ ODM (Mongoose)
+                        ▼
+                 MongoDB (Local/Atlas)
+          ┌────────────────────────────────┐
+          │ Collections (ex.: users)       │
+          │ Índices, validações, schemas   │
+          └────────────────────────────────┘
+```
+
+### Para que serve
+- Autenticação e perfis:
+  - Registro `POST /api/auth/register`, Login `POST /api/auth/login` (gera JWT), Perfil `GET /api/auth/profile` (com Bearer token).
+- Gestão de usuários (CRUD):
+  - `GET /api/users`, `GET /api/users/:id`, `POST /api/users`, `PUT /api/users/:id`, `DELETE /api/users/:id`.
+- Observabilidade e robustez:
+  - Health check `GET /health`, logs estruturados, rate limiting, segurança por headers, validação e tratamento central de erros.
+
+### Como o fluxo funciona
+- O frontend envia requisições ao backend usando `VITE_API_BASE_URL`.
+- O backend aplica middlewares, valida dados, executa regras nos services e persiste via Mongoose no MongoDB.
+- Após login, o token JWT é utilizado pelo frontend para acessar rotas protegidas.
+
 ## 🛠️ Instalação
 
 1. **Clone o repositório**

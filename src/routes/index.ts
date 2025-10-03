@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { userRoutes } from './userRoutes';
 import { authRoutes } from './authRoutes';
+import receiverRoutes from './receiverRoutes';
 
 const router = Router();
 
@@ -9,6 +10,9 @@ router.use('/auth', authRoutes);
 
 // Rotas de usuários
 router.use('/users', userRoutes);
+
+// Rotas de recebedores
+router.use('/receivers', receiverRoutes);
 
 // Rota de exemplo
 router.get('/', (_req, res) => {

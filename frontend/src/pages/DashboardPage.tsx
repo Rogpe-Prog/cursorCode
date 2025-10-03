@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
+import ReceiverSearch from '@/components/ReceiverSearch';
 
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -72,6 +73,15 @@ const DashboardPage: React.FC = () => {
             </Card>
           </Col>
         </Row>
+
+        {/* Seção para busca de recebedores (apenas para compradores) */}
+        {(user?.userType === 'comprador' || user?.userType === 'ambos') && (
+          <Row>
+            <Col className="mb-4">
+              <ReceiverSearch />
+            </Col>
+          </Row>
+        )}
       </Container>
     </div>
   );

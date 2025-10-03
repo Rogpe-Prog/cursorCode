@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import Logo from '@/components/Logo';
 
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -16,7 +17,10 @@ const DashboardPage: React.FC = () => {
     <div className="min-vh-100 bg-light">
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
         <Container>
-          <span className="navbar-brand">Dashboard</span>
+          <div className="navbar-brand d-flex align-items-center">
+            <Logo size="sm" className="me-2" />
+            <span className="ms-2">Dashboard</span>
+          </div>
           <div className="navbar-nav ms-auto">
             <Button variant="outline-light" onClick={handleLogout}>
               Sair

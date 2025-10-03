@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { validateForm, commonValidationRules, hasFormErrors } from '@/utils/validation';
 import { FormErrors, RegisterRequest } from '@/types';
+import Logo from '@/components/Logo';
 
 const RegisterPage: React.FC = () => {
   const { register, isLoading } = useAuth();
@@ -131,7 +132,8 @@ const RegisterPage: React.FC = () => {
             <Card className="shadow">
               <Card.Body className="p-4">
                 <div className="text-center mb-4">
-                  <h2 className="fw-bold text-primary">Cadastro</h2>
+                  <Logo size="lg" className="mb-3" />
+                  <h3 className="fw-bold text-primary">Cadastro</h3>
                   <p className="text-muted">Crie sua conta</p>
                 </div>
 
